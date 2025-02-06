@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Banque en Ligne</title>
+    <style>
+        /* CSS */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .dashboard {
+            padding: 20px;
+        }
+
+        .dashboard h2 {
+            margin-bottom: 20px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .actions button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .actions button:hover {
+            background-color: #0056b3;
+        }
+
+        .history {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .history h3 {
+            margin-bottom: 10px;
+        }
+
+        .history ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .history ul li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .history ul li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- En-tête -->
+    <header>
+        <div class="user-info">
+            <img src="https://via.placeholder.com/50" alt="Photo de profil">
+            <div>
+                <p id="user-name">Nom Prénom</p>
+                <p id="user-phone">Numéro de téléphone</p>
+            </div>
+        </div>
+        <button id="logout-btn">Déconnexion</button>
+    </header>
+
+    <!-- Tableau de bord -->
+    <div class="dashboard">
+        <h2>Tableau de Bord</h2>
+        <div class="actions">
+            <button id="withdraw-btn">Retrait à moi-même</button>
+            <button id="transfer-btn">Transaction à un autre compte</button>
+        </div>
+        <div class="history">
+            <h3>Historique des opérations</h3>
+            <ul id="history-list">
+                <!-- Les opérations seront ajoutées dynamiquement ici -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript
+        // Récupérer les informations de l'utilisateur depuis le localStorage
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        // Afficher les informations de l'utilisateur dans l'en-tête
+        if (user) {
+            document.getElementById('user-name').textContent = user.firstName + ' ' + user.lastName;
+            document.getElementById('user-phone').textContent = user.phone;
+        } else {
+            // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+            window.location.href = 'login.html';
+        }
+
+        // Gestion de la déconnexion
+        document.getElementById('logout-btn').addEventListener('click', function () {
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        });
+
+        // Simuler un historique des opérations
+        const historyList = document.getElementById('history-list');
+        const operations = [
+            { type: 'Retrait', amount: 100, date: '2025-02-01' },
+            { type: 'Transaction', amount: 200, to: '123456789', date: '2025-02-02' },
+            { type: 'Retrait', amount: 50, date: '2025-02-03' }
+        ];
+
+        // Afficher l'historique des opérations
+        operations.forEach(op => {
+            const li = document.createElement('li');
+            if (op.type === 'Retrait') {
+                li.textContent = `${op.type} de ${op.amount}€ le ${op.date}`;
+            } else if (op.type === 'Transaction') {
+                li.textContent = `${op.type} de ${op.amount}€ vers ${op.to} le ${op.date}`;
+            }
+            historyList.appendChild(li);
+        });
+
+        // Gestion des actions (retrait et transaction)
+        document.getElementById('withdraw-btn').addEventListener('click', function () {
+            const amount = prompt('Entrez le montant à retirer:');
+            if (amount) {
+                alert(`Retrait de ${amount}€ effectué avec succès.`);
+                // Ajouter l'opération à l'historique
+                const li = document.createElement('li');
+                li.textContent = `Retrait de ${amount}€ le ${new Date().toISOString().split('T')[0]}`;
+                historyList.appendChild(li);
+            }
+        });
+
+        document.getElementById('transfer-btn').addEventListener('click', function () {
+            const amount = prompt('Entrez le montant à transférer:');
+            const to = prompt('Entrez le numéro de téléphone du destinataire:');
+            if (amount && to) {
+                alert(`Transaction de ${amount}€ vers ${to} effectuée avec succès.`);
+                // Ajouter l'opération à l'historique
+                const li = document.createElement('li');
+                li.textContent = `Transaction de ${amount}€ vers ${to} le ${new Date().toISOString().split('T')[0]}`;
+                historyList.appendChild(li);
+            }
+        });
+    </script>
+</body>
+</html>
